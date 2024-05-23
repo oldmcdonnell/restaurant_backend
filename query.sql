@@ -1,3 +1,4 @@
-SELECT * FROM TNP_app_food;
-SELECT * FROM TNP_app_customer;
-SELECT * FROM TNP_app_
+-- SELECT * FROM TNP_app_food;
+-- SELECT * FROM TNP_app_customer;
+SELECT * FROM TNP_app_order;
+SELECT * FROM TNP_app_orderitem;
