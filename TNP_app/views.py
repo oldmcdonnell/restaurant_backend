@@ -21,9 +21,9 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-    def create(self, request):
-        mutable_data_copy = request.data.copy()
-        item_id = mutable_data_copy.get('item')
+    # def create(self, request):
+    #     mutable_data_copy = request.data.copy()
+    #     item_id = mutable_data_copy.get('item')
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()

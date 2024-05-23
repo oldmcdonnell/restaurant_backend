@@ -12,35 +12,35 @@ class FoodSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'price', 'food_type']
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    food = serializers.PrimaryKeyRelatedField(queryset=Food.objects.all())
+    # food = serializers.PrimaryKeyRelatedField(queryset=Food.objects.all())
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'food', 'quantity', 'subtotal']
+        fields = ['id', 'order','food', 'quantity', 'subtotal']
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True)
-    customer = CustomerSerializer()
+    # items = OrderItemSerializer(many=True)
+    # customer = CustomerSerializer()
 
     class Meta:
         model = Order
         fields = ['id', 'customer', 'created', 'updated', 'complete', 'items', 'delivery_instructions']
 
-    def create(self, validated_data):
-        items_data = validated_data.pop('items')
-        customer_data = validated_data.pop('customer')
+    # def create(self, validated_data):
+    #     items_data = validated_data.pop('items')
+    #     customer_data = validated_data.pop('customer')
 
-        customer, created = Customer.objects.get_or_create(**customer_data)
-        order = Order.objects.create(customer=customer, **validated_data)
+    #     customer, created = Customer.objects.get_or_create(**customer_data)
+    #     order = Order.objects.create(customer=customer, **validated_data)
 
-        for item_data in items_data:
-            OrderItem.objects.create(order=order, **item_data)
+    #     for item_data in items_data:
+    #         OrderItem.objects.create(order=order, **item_data)
         
-        return order
+    #     return order
 
 class CustomerReviewSerializer(serializers.ModelSerializer):
-    customer = CustomerSerializer()
-    food = FoodSerializer()
+    # customer = CustomerSerializer()
+    # food = FoodSerializer()
 
     class Meta:
         model = CustomerReview

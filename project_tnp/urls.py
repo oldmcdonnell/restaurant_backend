@@ -27,5 +27,5 @@ router.register(r'customer-reviews', CustomerReviewViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('customers/<int:pk>/completed-orders/', UserCompletedOrdersViewSet.as_view({'get':'completed'}), name='customer-completed-orders'),
+    # path('customers/<int:pk>/completed-orders/', UserCompletedOrdersViewSet.as_view({'get':'completed'}), name='customer-completed-orders'),
 ]

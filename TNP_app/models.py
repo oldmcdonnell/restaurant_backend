@@ -36,6 +36,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     complete = models.BooleanField(default=False)
+    food_item = models.ManyToManyField(Food, through='OrderItem')
 
     def __str__(self):
         return f"Order #{self.pk} - Complete: {self.complete}"
@@ -44,6 +45,7 @@ class Order(models.Model):
         return self.customer.delivery_instructions
 
 class OrderItem(models.Model):
+
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
