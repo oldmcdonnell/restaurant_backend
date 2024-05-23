@@ -47,12 +47,34 @@ from TNP_app.models import *
 #     Food(name='Poitin', description='Brewed in a tin can off the coast of Kerry, garauneteed to make you go blind', price=8.99, food_type=Food.ALCOHOL),
 # ])
 
-Customer.objects.bulk_create([
-    Customer(name='Eoin McDonnell', email='noneya@business.com', delivery_instructions='Watch out for the hell hound'),
-    Customer(name='', email='', delivery_instructions=''),
-    Customer(name='', email='', delivery_instructions=''),
-    Customer(name='', email='', delivery_instructions=''),
-    Customer(name='', email='', delivery_instructions=''),
-    Customer(name='', email='', delivery_instructions=''),
-    Customer(name='', email=''),
-])
+# Customer.objects.bulk_create([
+    
+#     Customer(name='', email='', delivery_instructions=''),
+#     Customer(name='', email='', delivery_instructions=''),
+#     Customer(name='', email='', delivery_instructions=''),
+#     Customer(name='', email='', delivery_instructions=''),
+#     Customer(name='', email='', delivery_instructions=''),
+#     Customer(name='', email=''),
+# ])
+
+# customers = [
+#     Customer(name='Gabby Gaelicer', email='noneya@business.com', delivery_instructions='Watch out for the hell hound'),
+#     Customer(name="Dick Fingers", email="Dick@fingers.com", delivery_instructions="Leave at the back door."),
+#     Customer(name="Le Guiche", email="Le@hGuice.com", delivery_instructions="Under the bridge."),
+#     Customer(name="Crotch Thumper", email="Crotch@thumper.com", delivery_instructions="Ring the bell and RUUN."),
+#     Customer(name="Running Bare", email="runningbare@hhh.com", delivery_instructions="Leave by the front door."),
+#     Customer(name="Pork and Peas Me", email="porkandpeas@hhh.com", delivery_instructions="Drop it near the garage."),
+#     Customer(name="Zero Dark Squirty", email="zeroSquirt@hhh.com", delivery_instructions="On the porch"),
+# ]
+
+# Customer.objects.bulk_create(customers)
+
+# customer = Customer.objects.create(
+#     name="Quick Draw",
+#     email="quickdraw@hhh.com",
+#     delivery_instructions="Place it by the mailbox."
+# )
+
+# Create a new order for the customer
+# order = Order.objects.create(customer=customer)
+

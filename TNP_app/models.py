@@ -8,7 +8,7 @@ class Customer(models.Model):
     delivery_instructions = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} Delivery instructions {self.delivery_instructions}'
 
 class Food(models.Model):
     TAPAS = 'Tapas'
@@ -40,6 +40,9 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.pk} - Complete: {self.complete}"
 
+    def delivery_instructions(self):
+        return self.customer.delivery_instructions
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
@@ -50,3 +53,12 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.food.name} - Quantity: {self.quantity}"
+    
+class CustomerReview(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField()
+    review = models.TextField()
+
+    def __str__(self):
+        return f"Review by {self.customer.name} for {self.food.name} - Rating: {self.rating}"
