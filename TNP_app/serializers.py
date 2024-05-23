@@ -9,7 +9,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 class FoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Food
-        fields = ['id', 'name', 'description', 'price', 'food_type']
+        fields = ['id', 'title', 'description', 'price', 'category']
 
 class OrderItemSerializer(serializers.ModelSerializer):
     # food = serializers.PrimaryKeyRelatedField(queryset=Food.objects.all())
@@ -41,7 +41,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class CustomerReviewSerializer(serializers.ModelSerializer):
     # customer = CustomerSerializer()
     # food = FoodSerializer()
-
+    food_name = serializers.ReadOnlyField(source = "food.title")
     class Meta:
         model = CustomerReview
-        fields = ['id', 'customer', 'food', 'rating', 'review']
+        fields = ['id', 'customer', 'food', 'food_name', 'rating', 'review']
