@@ -42,6 +42,7 @@ class CustomerReviewSerializer(serializers.ModelSerializer):
     # customer = CustomerSerializer()
     # food = FoodSerializer()
     food_name = serializers.ReadOnlyField(source = "food.title")
+    customer_name = serializers.ReadOnlyField(source = "customer.name")
     class Meta:
         model = CustomerReview
-        fields = ['id', 'customer', 'food', 'food_name', 'rating', 'review']
+        fields = ['id', 'customer', 'food', 'customer_name', 'food_name', 'rating', 'review']
