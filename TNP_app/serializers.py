@@ -12,37 +12,35 @@ class FoodSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'price', 'category']
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    # food = serializers.PrimaryKeyRelatedField(queryset=Food.objects.all())
+    food = FoodSerializer(read_only=True)
+    subtotal = serializers.ReadOnlyField()
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'order','food', 'quantity', 'subtotal']
+        fields = ['id', 'order', 'food', 'quantity', 'subtotal']
 
 class OrderSerializer(serializers.ModelSerializer):
-    # items = OrderItemSerializer(many=True)
-    # customer = CustomerSerializer()
+    items = OrderItemSerializer(many=True, write_only=True)
+    customer = CustomerSerializer(read_only=True)
+    delivery_instructions = serializers.ReadOnlyField(source='customer.delivery_instructions')
 
     class Meta:
         model = Order
         fields = ['id', 'customer', 'created', 'updated', 'complete', 'items', 'delivery_instructions']
 
-    # def create(self, validated_data):
-    #     items_data = validated_data.pop('items')
-    #     customer_data = validated_data.pop('customer')
-
-    #     customer, created = Customer.objects.get_or_create(**customer_data)
-    #     order = Order.objects.create(customer=customer, **validated_data)
-
-    #     for item_data in items_data:
-    #         OrderItem.objects.create(order=order, **item_data)
+    def create(self, validated_data):
+        items_data = validated_data.pop('items')
+        order = Order.objects.create(**validated_data)
         
-    #     return order
+        for item_data in items_data:
+            OrderItem.objects.create(order=order, **item_data)
+        
+        return order
 
 class CustomerReviewSerializer(serializers.ModelSerializer):
-    # customer = CustomerSerializer()
-    # food = FoodSerializer()
-    food_name = serializers.ReadOnlyField(source = "food.title")
-    customer_name = serializers.ReadOnlyField(source = "customer.name")
+    food_name = serializers.ReadOnlyField(source='food.title')
+    customer_name = serializers.ReadOnlyField(source='customer.name')
+
     class Meta:
         model = CustomerReview
         fields = ['id', 'customer', 'food', 'customer_name', 'food_name', 'rating', 'review']

@@ -1,12 +1,9 @@
-from rest_framework.decorators import api_view
-from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from rest_framework.reverse import reverse
-from rest_framework.decorators import action
-from .models import *
-
-from .serializers import *
+from .models import Customer, Food, Order, OrderItem, CustomerReview
+from .serializers import CustomerSerializer, FoodSerializer, OrderSerializer, OrderItemSerializer, CustomerReviewSerializer
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -21,9 +18,22 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-    # def create(self, request):
-    #     mutable_data_copy = request.data.copy()
-    #     item_id = mutable_data_copy.get('item')
+    def create(self, request, *args, **kwargs):
+        order_data = request.data
+        items_data = order_data.pop('items', [])
+        
+        order_serializer = self.get_serializer(data=order_data)
+        order_serializer.is_valid(raise_exception=True)
+        order = order_serializer.save()
+        
+        for item_data in items_data:
+            item_data['order'] = order.id
+            item_serializer = OrderItemSerializer(data=item_data)
+            item_serializer.is_valid(raise_exception=True)
+            item_serializer.save()
+        
+        headers = self.get_success_headers(order_serializer.data)
+        return Response(order_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
@@ -34,10 +44,13 @@ class CustomerReviewViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerReviewSerializer
 
 class UserCompletedOrdersViewSet(viewsets.ViewSet):
-    # action allows the endpoint available to the url
     @action(detail=True, methods=['get'])
     def completed(self, request, pk=None):
-        customer = Customer.objects.get(id=id)
+        try:
+            customer = Customer.objects.get(pk=pk)
+        except Customer.DoesNotExist:
+            return Response({"error": "Customer not found"}, status=404)
+        
         order_history = Order.objects.filter(customer=customer, complete=True)
         serializer = OrderSerializer(order_history, many=True)
-        return Response(serializer.data) ##returns filtered data as get response
+        return Response(serializer.data)

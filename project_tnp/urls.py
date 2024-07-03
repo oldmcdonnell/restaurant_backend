@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from TNP_app.views import *
+from TNP_app.views import CustomerViewSet, FoodViewSet, OrderViewSet, OrderItemViewSet, CustomerReviewViewSet, UserCompletedOrdersViewSet
 
 router = DefaultRouter()
 router.register(r'customers', CustomerViewSet)
@@ -27,5 +27,5 @@ router.register(r'customer-reviews', CustomerReviewViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    # path('customers/<int:pk>/completed-orders/', UserCompletedOrdersViewSet.as_view({'get':'completed'}), name='customer-completed-orders'),
+    path('customers/<int:pk>/completed-orders/', UserCompletedOrdersViewSet.as_view({'get': 'completed'}), name='customer-completed-orders'),
 ]

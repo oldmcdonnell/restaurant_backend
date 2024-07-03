@@ -1,8 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-# Create your models here.
-
 class Customer(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -37,7 +35,7 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     complete = models.BooleanField(default=False)
-    food_item = models.ManyToManyField(Food, through='OrderItem')
+    items = models.ManyToManyField(Food, through='OrderItem', related_name='orders')
 
     def __str__(self):
         return f"Order #{self.pk} by {self.customer.name} - Complete: {self.complete}"
@@ -46,7 +44,7 @@ class Order(models.Model):
         return self.customer.delivery_instructions
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, related_name='order_items', on_delete=models.CASCADE)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
@@ -59,7 +57,7 @@ class OrderItem(models.Model):
 class CustomerReview(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField(0)# need this to be zero until it is properly implemented
+    rating = models.PositiveIntegerField(default=0)  # Keeping it as it is
     review = models.TextField()
 
     def __str__(self):
