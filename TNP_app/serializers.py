@@ -20,16 +20,16 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'order', 'food', 'quantity', 'subtotal']
 
 class OrderSerializer(serializers.ModelSerializer):
-    items = OrderItemSerializer(many=True, write_only=True)
-    customer = CustomerSerializer(read_only=True)
+    customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
     delivery_instructions = serializers.ReadOnlyField(source='customer.delivery_instructions')
+    items = OrderItemSerializer(many=True, write_only=True, source='order_items')
 
     class Meta:
         model = Order
-        fields = ['id', 'customer', 'created', 'updated', 'complete', 'items', 'delivery_instructions']
+        fields = ['id', 'customer', 'created', 'updated', 'complete', 'delivery_instructions', 'items']
 
     def create(self, validated_data):
-        items_data = validated_data.pop('items')
+        items_data = validated_data.pop('order_items')
         order = Order.objects.create(**validated_data)
         
         for item_data in items_data:

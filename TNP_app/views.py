@@ -5,7 +5,6 @@ from rest_framework.exceptions import ValidationError
 from .models import Customer, Food, Order, OrderItem, CustomerReview
 from .serializers import CustomerSerializer, FoodSerializer, OrderSerializer, OrderItemSerializer, CustomerReviewSerializer
 
-
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
@@ -22,14 +21,22 @@ class OrderViewSet(viewsets.ModelViewSet):
         order_data = request.data
         items_data = order_data.pop('items', [])
         
+        print("Order Data:", order_data)
+        print("Items Data:", items_data)
+        
         order_serializer = self.get_serializer(data=order_data)
-        order_serializer.is_valid(raise_exception=True)
+        if not order_serializer.is_valid():
+            print("Order Validation Errors:", order_serializer.errors)
+            raise ValidationError(order_serializer.errors)
+        
         order = order_serializer.save()
         
         for item_data in items_data:
             item_data['order'] = order.id
             item_serializer = OrderItemSerializer(data=item_data)
-            item_serializer.is_valid(raise_exception=True)
+            if not item_serializer.is_valid():
+                print("OrderItem Validation Errors:", item_serializer.errors)
+                raise ValidationError(item_serializer.errors)
             item_serializer.save()
         
         headers = self.get_success_headers(order_serializer.data)
