@@ -59,7 +59,7 @@ class OrderItem(models.Model):
 class CustomerReview(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    rating = models.PositiveIntegerField(0)# need this to be zero until it is properly implemented
     review = models.TextField()
 
     def __str__(self):
