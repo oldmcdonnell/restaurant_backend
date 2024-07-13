@@ -5,6 +5,8 @@ from rest_framework.exceptions import ValidationError
 from .models import Customer, Food, Order, OrderItem, CustomerReview
 from .serializers import CustomerSerializer, FoodSerializer, OrderSerializer, OrderItemSerializer, CustomerReviewSerializer
 
+
+#this is the fly.io version
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
