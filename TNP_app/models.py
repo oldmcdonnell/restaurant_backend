@@ -1,6 +1,5 @@
 from django.db import models
-
-# Create your models here.
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Customer(models.Model):
     name = models.CharField(max_length=100)
@@ -8,7 +7,7 @@ class Customer(models.Model):
     delivery_instructions = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} (Email: {self.email})'
 
 class Food(models.Model):
     TAPAS = 'Tapas'
@@ -16,32 +15,36 @@ class Food(models.Model):
     GRUEL = 'Gruel'
     ALCOHOL = 'Alcohol'
 
-    FOOD_TYPES = [
+    CATEGORY = [
         (TAPAS, 'Tapas'),
         (EDIBLE, 'Edible'),
         (GRUEL, 'Gruel'),
         (ALCOHOL, 'Alcohol'),
     ]
 
-    name = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    food_type = models.CharField(max_length=20, choices=FOOD_TYPES)
+    category = models.CharField(max_length=20, choices=CATEGORY)
 
     def __str__(self):
-        return f"{self.name} - {self.description} - Type: {self.get_food_type_display()}"
+        return f"{self.title} - {self.description} - Type: {self.get_category_display()} - Price: ${self.price}"
 
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     complete = models.BooleanField(default=False)
+    items = models.ManyToManyField(Food, through='OrderItem', related_name='orders')
 
     def __str__(self):
-        return f"Order #{self.pk} - Complete: {self.complete}"
+        return f"Order #{self.pk} by {self.customer.name} - Complete: {self.complete}"
+
+    def delivery_instructions(self):
+        return self.customer.delivery_instructions
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, related_name='order_items', on_delete=models.CASCADE)
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
@@ -49,4 +52,13 @@ class OrderItem(models.Model):
         return self.food.price * self.quantity
 
     def __str__(self):
-        return f"{self.food.name} - Quantity: {self.quantity}"
+        return f"{self.food.title} - Quantity: {self.quantity} - Subtotal: ${self.subtotal()}"
+
+class CustomerReview(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(default=0)  # Keeping it as it is
+    review = models.TextField()
+
+    def __str__(self):
+        return f"Review by {self.customer.name} for {self.food.title} - Rating: {self.rating} - {self.review}"
